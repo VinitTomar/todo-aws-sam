@@ -1,0 +1,24 @@
+{
+  "name": "todo_app",
+  "version": "1.0.0",
+  "description": "Todo app for aws sam",
+  "main": "src/app.ts",
+  "repository": "https://github.com/VinitTomar/todo-aws-sam.git",
+  "author": "Vinit Tomar",
+  "license": "MIT",
+  "scripts": {
+    "unit": "jest",
+    "build": "npx webpack",
+    "deploy": "sam deploy",
+    "lint": "eslint '*.ts' --quiet --fix",
+    "compile": "tsc",
+    "build:depricated": "sam build --beta-features",
+    "test": "echo test success",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
+    "husky": "^8.0.1"
+  }
+}
