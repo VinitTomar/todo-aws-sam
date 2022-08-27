@@ -9,6 +9,7 @@
   "scripts": {
     "unit": "jest",
     "build": "npx webpack",
+    "predeploy": "yarn build",
     "deploy": "sam deploy --stack-name prod --s3-bucket takshila-todo-app --capabilities CAPABILITY_IAM",
     "lint": "eslint '*.ts' --quiet --fix",
     "compile": "tsc",
@@ -24,6 +25,7 @@
     "@types/node": "^17.0.13",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
+    "aws-sdk": "^2.1204.0",
     "esbuild": "^0.14.14",
     "esbuild-jest": "^0.5.0",
     "eslint": "^8.8.0",

@@ -15,3 +15,18 @@
 11. Create s3 bucket for sam deploy cmd. (can be used sam deploy --guided)
 12. Run command `yarn deploy`. 
 
+## Create & list todos
+
+1. Add `CreateTodoFunction` & `GetTodosFunction` function resource.
+2. Add post api event to CreateTodoFunction resource & get api event to GetTodosFunction.
+3. Add `TodoTable` simple table resource.
+4. Add `DynamoDBCrudPolicy` policies to CreateTodoFunction.
+5. Add `TODO_TABLE` to environment variables of both above function resource.
+
+### File `src/app.ts` updates:
+
+1. Add Todo interface & CreateTodo type.
+2. Add dynamodb, randomUUID to imports.
+3. Add `timeStamp` & `jsonResponse` utily functions.
+4. Add `createTodo` function & `createTodoHandler` handler.
+5. Add `getAllTodos` function & `getTodoListHandler` handler.
