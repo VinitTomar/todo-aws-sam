@@ -7,28 +7,61 @@ Description: >
   
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 100
+    Runtime: nodejs16.x
+    MemorySize: 128
 
 Resources:
   GetTodosFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: dist/
-      Handler: app.lambdaHandler
-      Runtime: nodejs16.x
-      Architectures:
-        - x86_64
+      Handler: app.getTodoListHandler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodoTable
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodoTable
       Events:
         GetTodos:
           Type: Api
           Properties:
-            Path: /hello
+            Path: /todos
             Method: get
+
+  CreateTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: app.createTodoHandler 
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodoTable
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodoTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: POST
+
+  TodoTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
 
 Outputs:
   GetTodosApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/todos"
   GetTodosFunction:
     Description: "Hello World Lambda Function ARN"
     Value: !GetAtt GetTodosFunction.Arn

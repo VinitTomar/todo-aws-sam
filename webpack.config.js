@@ -7,7 +7,7 @@ module.exports = {
   },
   target: 'node',
   externals: {
-    'aws-sdk': 'aws-sdk'
+    'aws-sdk/clients/dynamodb': true
   },
   module: {
     rules: [
