@@ -30,3 +30,30 @@
 3. Add `timeStamp` & `jsonResponse` utily functions.
 4. Add `createTodo` function & `createTodoHandler` handler.
 5. Add `getAllTodos` function & `getTodoListHandler` handler.
+
+## Get by id
+
+### File `src/app.ts`
+
+1. Add `getTodoById` function. Params for dynamoDb client are tableName and key as an object with id property.
+2. Add `getTodoByIdHandler` for getting todo by id. This handler gets the todo id from `event.pathParameters?.id`.
+
+### File `templat.yaml`
+
+1. Add `GetTodoByIdFunction` function resource.
+2. Add an event of type `Api` to the above resource with `Path: /todos/{id}` with get method. Here id is the path paramter which is used by `getTodoByIdHandler`.
+3. Add required dynamoDb policy and enivronment variables.
+
+## Update todo
+
+### File `src/app.ts`
+
+1. Rename function `createTodo` to `putTodo` and add id as function parameter.
+2. Move `const id: string = randomUUID();` to `createTodoHandler` and call putTodo in place of createTodo by passing id as argument.
+3. Add `updateTodoHandler` for updating todo. This handler will call `putTodo` function and get todo id from `event.pathParameters?.id`.
+
+### File `templat.yaml`
+
+1. Add `UpdateTodoByIdFunction` function resource.
+2. Add an event of type `Api` to the above resource with `Path: /todos/{id}` with put as method.
+3. Add required dynamoDb policy and enivronment variables.
