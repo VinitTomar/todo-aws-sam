@@ -28,9 +28,19 @@ const getAllTodos = async (): Promise<Todo[]> => {
   return list;
 }
 
-// const getTodoById = async (id: string): Promise<Todo> {
+const getTodoById = async (id: string): Promise<Todo> => {
+  const params: DocumentClient.GetItemInput = {
+    TableName: tableName,
+    Key: {
+      id
+    }
+  };
 
-// }
+  const data = await docClient.get(params).promise();
+  const todo: Todo = <any>data.Item;
+
+  return todo;
+}
 
 const timeStamp = () => {
   return Date().split(' (')[0];
@@ -43,9 +53,7 @@ const jsonResponse = (status: number, body: unknown): APIGatewayProxyResult => {
   };
 }
 
-const createTodo = async (todo: CreateTodo): Promise<Todo> => {
-  const id = randomUUID();
-
+const putTodo = async (id: string, todo: UpdateTodo): Promise<Todo> => {
   const item: Todo = {
     id,
     ...todo,
@@ -60,14 +68,10 @@ const createTodo = async (todo: CreateTodo): Promise<Todo> => {
 
   const result = await docClient.put(params).promise();
 
-  console.log("createTodo result ", { result });
+  console.log("putTodo result ", { result });
 
   return item;
 }
-
-// const updateTodo = async (id: string, todo: UpdateTodo): Promise<Todo> {
-
-// }
 
 // const patchTodo = async (id: string, todo: PatchTodo): Promise<Todo> {
 
@@ -85,8 +89,28 @@ export const getTodoListHandler = async (event: APIGatewayProxyEvent): Promise<A
 
   try {
     const allTodo = await getAllTodos();
-    console.log("getTodoListHandler", { allTodo });
     response = jsonResponse(200, allTodo);
+  } catch (err) {
+    console.log(err);
+    response = {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'some error happened',
+      }),
+    };
+  }
+
+  return response;
+};
+
+export const getTodoByIdHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+
+  console.log("getTodoByIdHandler", event);
+  let response: APIGatewayProxyResult;
+
+  try {
+    const todo = await getTodoById(event.pathParameters?.id || '');
+    response = jsonResponse(200, todo);
   } catch (err) {
     console.log(err);
     response = {
@@ -107,8 +131,32 @@ export const createTodoHandler = async (event: APIGatewayProxyEvent): Promise<AP
 
   try {
     const todo: CreateTodo = JSON.parse(event.body || '{}');
-    const newTodo = await createTodo(todo);
+    const id: string = randomUUID();
+    const newTodo = await putTodo(id, todo);
     response = jsonResponse(201, newTodo);
+  } catch (err) {
+    console.log(err);
+    response = {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'some error happened',
+      }),
+    };
+  }
+
+  return response;
+
+};
+
+export const updateTodoHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+
+  console.log("createTodoHandler", event);
+  let response: APIGatewayProxyResult;
+
+  try {
+    const todo: CreateTodo = JSON.parse(event.body || '{}');
+    const updatedTodo = await putTodo(event.pathParameters?.id || '', todo);
+    response = jsonResponse(200, updatedTodo);
   } catch (err) {
     console.log(err);
     response = {

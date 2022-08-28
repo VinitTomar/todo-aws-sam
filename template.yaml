@@ -42,12 +42,48 @@ Resources:
         Variables:
           TODO_TABLE: !Ref TodoTable
       Events:
-        Api:
+        CreateTodo:
           Type: Api
           Properties:
             Path: /todos
             Method: POST
 
+  GetTodoByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: app.getTodoByIdHandler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodoTable
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodoTable
+      Events:
+        GetTodoById:
+          Type: Api
+          Properties:
+            Path: /todos/{id}
+            Method: get
+  
+  UpdateTodoByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: app.updateTodoHandler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodoTable
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodoTable
+      Events:
+        UpdateTodo:
+          Type: Api
+          Properties:
+            Path: /todos/{id}
+            Method: PUT
+  
   TodoTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
