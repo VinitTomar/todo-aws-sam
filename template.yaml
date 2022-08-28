@@ -84,6 +84,42 @@ Resources:
             Path: /todos/{id}
             Method: PUT
   
+  PatchTodoByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: app.patchTodoHandler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodoTable
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodoTable
+      Events:
+        UpdateTodo:
+          Type: Api
+          Properties:
+            Path: /todos/{id}
+            Method: PATCH
+  
+  DeleteTodoByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: app.deleteTodoHandler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TodoTable
+      Environment:
+        Variables:
+          TODO_TABLE: !Ref TodoTable
+      Events:
+        UpdateTodo:
+          Type: Api
+          Properties:
+            Path: /todos/{id}
+            Method: DELETE
+  
   TodoTable:
     Type: AWS::Serverless::SimpleTable
     Properties:

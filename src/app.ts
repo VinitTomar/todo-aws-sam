@@ -17,6 +17,19 @@ interface Todo {
 type CreateTodo = Omit<Todo, 'id' | 'createdAt' | 'updatedAt'>;
 type UpdateTodo = CreateTodo;
 type PatchTodo = Partial<CreateTodo>;
+type PutTodo = Optional<Todo, 'createdAt'>;
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+
+const timeStamp = () => {
+  return Date().split(' (')[0];
+}
+
+const jsonResponse = (status: number, body: unknown): APIGatewayProxyResult => {
+  return {
+    statusCode: status,
+    body: JSON.stringify(body),
+  };
+}
 
 const getAllTodos = async (): Promise<Todo[]> => {
   const params: DocumentClient.ScanInput = {
@@ -42,23 +55,17 @@ const getTodoById = async (id: string): Promise<Todo> => {
   return todo;
 }
 
-const timeStamp = () => {
-  return Date().split(' (')[0];
-}
+const putTodo = async (todo: UpdateTodo, id?: string): Promise<PutTodo> => {
 
-const jsonResponse = (status: number, body: unknown): APIGatewayProxyResult => {
-  return {
-    statusCode: status,
-    body: JSON.stringify(body),
-  };
-}
-
-const putTodo = async (id: string, todo: UpdateTodo): Promise<Todo> => {
-  const item: Todo = {
-    id,
+  const item: PutTodo = {
+    id: id ? id : randomUUID(),
     ...todo,
     createdAt: timeStamp(),
     updatedAt: timeStamp(),
+  };
+
+  if (!id) {
+    delete item.createdAt;
   }
 
   const params: DocumentClient.PutItemInput = {
@@ -73,13 +80,45 @@ const putTodo = async (id: string, todo: UpdateTodo): Promise<Todo> => {
   return item;
 }
 
-// const patchTodo = async (id: string, todo: PatchTodo): Promise<Todo> {
+const patchTodo = async (id: string, todo: PatchTodo) => {
+  let UpdateExpression = 'set ';
+  let ExpressionAttributeNames: any = {};
+  let ExpressionAttributeValues: any = {};
 
-// }
+  for (const key in todo) {
+    if (key !== 'name' && key !== 'description' && key !== 'status')
+      continue;
 
-// const deleteTodo = async (id: string): Promise<string> {
+    UpdateExpression += `#${key} = :${key}, `;
+    ExpressionAttributeNames[`#${key}`] = key;
+    ExpressionAttributeValues[`:${key}`] = todo[key];
+  }
 
-// }
+  UpdateExpression += `updatedAt = :updatedAt`;
+  ExpressionAttributeValues[':updatedAt'] = timeStamp();
+
+  console.log({ UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues })
+
+  const params: DocumentClient.UpdateItemInput = {
+    TableName: tableName,
+    Key: { id },
+    UpdateExpression,
+    ExpressionAttributeNames,
+    ExpressionAttributeValues
+  }
+
+  return await docClient.update(params).promise();
+
+}
+
+const deleteTodo = async (id: string) => {
+  const params: DocumentClient.DeleteItemInput = {
+    TableName: tableName,
+    Key: { id }
+  }
+
+  return docClient.delete(params).promise();
+}
 
 
 export const getTodoListHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -131,8 +170,7 @@ export const createTodoHandler = async (event: APIGatewayProxyEvent): Promise<AP
 
   try {
     const todo: CreateTodo = JSON.parse(event.body || '{}');
-    const id: string = randomUUID();
-    const newTodo = await putTodo(id, todo);
+    const newTodo = await putTodo(todo);
     response = jsonResponse(201, newTodo);
   } catch (err) {
     console.log(err);
@@ -150,12 +188,57 @@ export const createTodoHandler = async (event: APIGatewayProxyEvent): Promise<AP
 
 export const updateTodoHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
-  console.log("createTodoHandler", event);
+  console.log("updateTodoHandler", event);
   let response: APIGatewayProxyResult;
 
   try {
-    const todo: CreateTodo = JSON.parse(event.body || '{}');
-    const updatedTodo = await putTodo(event.pathParameters?.id || '', todo);
+    const todo: UpdateTodo = JSON.parse(event.body || '{}');
+    const updatedTodo = await putTodo(todo, event.pathParameters?.id || '');
+    response = jsonResponse(200, updatedTodo);
+  } catch (err) {
+    console.log(err);
+    response = {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'some error happened',
+      }),
+    };
+  }
+
+  return response;
+
+};
+
+export const patchTodoHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+
+  console.log("patchTodoHandler", event);
+  let response: APIGatewayProxyResult;
+
+  try {
+    const todo: PatchTodo = JSON.parse(event.body || '{}');
+    const updatedTodo = await patchTodo(event.pathParameters?.id || '', todo);
+    response = jsonResponse(200, updatedTodo);
+  } catch (err) {
+    console.log(err);
+    response = {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'some error happened',
+      }),
+    };
+  }
+
+  return response;
+
+};
+
+export const deleteTodoHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+
+  console.log("patchTodoHandler", event);
+  let response: APIGatewayProxyResult;
+
+  try {
+    const updatedTodo = await deleteTodo(event.pathParameters?.id || '');
     response = jsonResponse(200, updatedTodo);
   } catch (err) {
     console.log(err);
