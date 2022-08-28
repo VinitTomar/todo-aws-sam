@@ -38,7 +38,7 @@
 1. Add `getTodoById` function. Params for dynamoDb client are tableName and key as an object with id property.
 2. Add `getTodoByIdHandler` for getting todo by id. This handler gets the todo id from `event.pathParameters?.id`.
 
-### File `templat.yaml`
+### File `template.yaml`
 
 1. Add `GetTodoByIdFunction` function resource.
 2. Add an event of type `Api` to the above resource with `Path: /todos/{id}` with get method. Here id is the path paramter which is used by `getTodoByIdHandler`.
@@ -52,8 +52,32 @@
 2. Move `const id: string = randomUUID();` to `createTodoHandler` and call putTodo in place of createTodo by passing id as argument.
 3. Add `updateTodoHandler` for updating todo. This handler will call `putTodo` function and get todo id from `event.pathParameters?.id`.
 
-### File `templat.yaml`
+### File `template.yaml`
 
 1. Add `UpdateTodoByIdFunction` function resource.
 2. Add an event of type `Api` to the above resource with `Path: /todos/{id}` with put as method.
 3. Add required dynamoDb policy and enivronment variables.
+
+> Bug fix for updateTodoHanler. At the time of updation, createdAt value was also updated.
+> To fix this id param of putTodo function is made option and `PutTodo` type is added.
+> Due to change in putTodo function, we have to updated createTodoHandler.
+
+## Patch todo
+
+### File `src/app.ts`
+
+1. Add `patchTodoHandler` handler for partially updating todo.
+2. Add `pathcTodo` function. This will update todo by using `UpdateExpression`, which is genereated dyamically.
+
+### File `template.yaml`
+
+1. Add `PatchTodoByIdFunction` function resource.
+2. Add an event of type `Api` to the above resource with `Path: /todos/{id}` with patch as method.
+3. Add required dynamoDb policy and enivronment variables.
+
+## Delete todo
+
+1. Add `deleteTodoHandler` and `deleteTodo` fucntion to app.ts file.
+2. Inside deleteTodo fucntion call `delete` method of `docClient` to delete a todo.
+3. Add `DeleteTodoByIdFunction` function resource to template.yaml file, with Api event.
+4. This api event will have path set to `/todos/{id}` and method as Delete.
