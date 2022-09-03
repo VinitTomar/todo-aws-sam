@@ -15,8 +15,8 @@ Resources:
   GetTodosFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: dist/
-      Handler: app.getTodoListHandler
+      CodeUri: dist/todo-list
+      Handler: index.getTodoListHandler
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -33,8 +33,8 @@ Resources:
   CreateTodoFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: dist/
-      Handler: app.createTodoHandler 
+      CodeUri: dist/todo-create
+      Handler: index.createTodoHandler 
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -51,8 +51,8 @@ Resources:
   GetTodoByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: dist/
-      Handler: app.getTodoByIdHandler
+      CodeUri: dist/todo-by-id
+      Handler: index.getTodoByIdHandler
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -69,8 +69,8 @@ Resources:
   UpdateTodoByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: dist/
-      Handler: app.updateTodoHandler
+      CodeUri: dist/todo-update
+      Handler: index.updateTodoHandler
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -87,8 +87,8 @@ Resources:
   PatchTodoByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: dist/
-      Handler: app.patchTodoHandler
+      CodeUri: dist/todo-patch
+      Handler: index.patchTodoHandler
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -105,8 +105,8 @@ Resources:
   DeleteTodoByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: dist/
-      Handler: app.deleteTodoHandler
+      CodeUri: dist/todo-delete
+      Handler: index.deleteTodoHandler
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable

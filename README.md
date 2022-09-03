@@ -1,5 +1,13 @@
 # todo-aws-sam
 
+## Final
+
+1. Code separated into different respect of their jobs.
+2. `webpack.config.js` updated for dynamic entry point.
+3. Added util folder and types.d.ts
+4. Updated `templat.yaml`
+5. Move eslint files, .npmignore, jest config file, prettierrc.js to the root
+
 ## Setup
 
 1. sam init
