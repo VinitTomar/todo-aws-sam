@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
-import { timeStamp, tableName, docClient, jsonResponse, lambdaWrapper } from "./util/helper";
+import { timeStamp, tableName, docClient, jsonResponse, lambdaWrapper } from "@util/helper";
 
 
 const patchTodo = async (id: string, todo: PatchTodo) => {

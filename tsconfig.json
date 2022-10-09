@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
     "target": "es2020",
     "strict": true,
     "preserveConstEnums": true,
@@ -9,6 +10,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@util/*": [
+        "./util/*"
+      ]
+    }
   },
   "exclude": [
     "node_modules",

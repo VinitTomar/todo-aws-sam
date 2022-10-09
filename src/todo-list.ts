@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { docClient, jsonResponse, lambdaWrapper, tableName } from "./util/helper";
+import { docClient, jsonResponse, lambdaWrapper, tableName } from "@util/helper";
 
 
 const getAllTodos = async (): Promise<Todo[]> => {

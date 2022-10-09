@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { putTodo } from "./util/todo-put";
-import { lambdaWrapper, jsonResponse } from "./util/helper";
+import { putTodo } from "@util/todo-put";
+import { lambdaWrapper, jsonResponse } from "@util/helper";
 
 
 export const createTodoHandler = lambdaWrapper(async (

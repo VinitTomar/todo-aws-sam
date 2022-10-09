@@ -17,6 +17,8 @@ Resources:
     Properties:
       CodeUri: dist/todo-list
       Handler: index.getTodoListHandler
+      Layers:
+        - !Ref LayerHelper
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -34,7 +36,10 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: dist/todo-create
-      Handler: index.createTodoHandler 
+      Handler: index.createTodoHandler
+      Layers:
+        - !Ref LayerHelper
+        - !Ref LayerTodoPut
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -53,6 +58,8 @@ Resources:
     Properties:
       CodeUri: dist/todo-by-id
       Handler: index.getTodoByIdHandler
+      Layers:
+        - !Ref LayerHelper
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -71,6 +78,9 @@ Resources:
     Properties:
       CodeUri: dist/todo-update
       Handler: index.updateTodoHandler
+      Layers:
+        - !Ref LayerHelper
+        - !Ref LayerTodoPut
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -89,6 +99,8 @@ Resources:
     Properties:
       CodeUri: dist/todo-patch
       Handler: index.patchTodoHandler
+      Layers:
+        - !Ref LayerHelper
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -107,6 +119,8 @@ Resources:
     Properties:
       CodeUri: dist/todo-delete
       Handler: index.deleteTodoHandler
+      Layers:
+        - !Ref LayerHelper
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TodoTable
@@ -119,6 +133,24 @@ Resources:
           Properties:
             Path: /todos/{id}
             Method: DELETE
+
+  LayerHelper:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: LayerHelper
+      Description: Helper layer for todo lambdas.
+      ContentUri: "dist/layer_helper/"
+      CompatibleRuntimes:
+        - nodejs16.x
+
+  LayerTodoPut:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: LayerTodoPut
+      Description: Helper layer for todo lambdas.
+      ContentUri: "dist/layer_todo-put/"
+      CompatibleRuntimes:
+        - nodejs16.x
   
   TodoTable:
     Type: AWS::Serverless::SimpleTable

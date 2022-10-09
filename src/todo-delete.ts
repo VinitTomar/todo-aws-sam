@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
-import { tableName, docClient, jsonResponse, lambdaWrapper } from "./util/helper";
+import { tableName, docClient, jsonResponse, lambdaWrapper } from "@util/helper";
 
 
 const deleteTodo = async (id: string) => {
